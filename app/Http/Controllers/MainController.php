@@ -61,6 +61,10 @@ class MainController extends Controller
     {
         $id = Operations::verificaId($id);
 
+        if ($id === null) {
+            return redirect()->route('home')->with(['error' => 'Id inválido.']);
+        }
+
         $nota = Nota::find($id);
         return view('editar-nota', compact('nota'));
     }
@@ -88,6 +92,10 @@ class MainController extends Controller
         }
         $id = Operations::verificaId($request->nota_id);
 
+        if ($id === null) {
+            return redirect()->route('home')->with(['error' => 'Id inválido.']);
+        }
+
         $nota = Nota::find($id);
         //update nota
         $nota->titulo = $request->titulo;
@@ -100,6 +108,11 @@ class MainController extends Controller
     public function deletarNota($id)
     {
         $id = Operations::verificaId($id);
+    
+        if ($id === null) {
+            return redirect()->route('home')->with(['error' => 'Id inválido.']);
+        }
+
         $nota = Nota::find($id);
 
         return view('deletar-nota', compact('nota'));
@@ -107,6 +120,11 @@ class MainController extends Controller
     public function deletarNotaConfirma($id)
     {
         $id = Operations::verificaId($id);
+    
+        if ($id === null) {
+            return redirect()->route('home')->with(['error' => 'Id inválido.']);
+        }
+
         // carrega nota
         $nota = Nota::find($id);
 

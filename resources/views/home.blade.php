@@ -11,6 +11,12 @@
                     </div>
                 @endif
 
+                @if (session('error'))
+                    <div class="alert alert-danger mt-3">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <!-- no notes available -->
                 @if (count($notas) === 0)
                     <div class="row mt-5">

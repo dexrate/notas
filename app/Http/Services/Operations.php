@@ -14,7 +14,8 @@ class Operations
             $id = Crypt::decrypt($value);
         } catch (DecryptException $e) {
             // Handle the decryption error, e.g., redirect or show an error message
-            return redirect()->route('home')->withErrors(['error' => 'Id inválido.']);
+            // return redirect()->route('home')->withErrors(['error' => 'Id inválido.']);
+            return null; // or handle the error as needed
         }
         return $id;
     }
