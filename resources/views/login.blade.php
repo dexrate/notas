@@ -9,7 +9,12 @@
                 <div class="text-center p-3">
                     <img src="assets/images/logo.png" alt="Notes logo">
                 </div>
-
+                {{-- Logout feito --}}
+                @if (session('logout_success'))
+                    <div class="alert alert-success mt-3">
+                        {{ session('logout_success') }}
+                    </div>
+                @endif
                 <!-- form -->
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-12">
@@ -35,6 +40,12 @@
                                 <button type="submit" class="btn btn-secondary w-100">LOGIN</button>
                             </div>
                         </form>
+                        {{-- Login errado --}}
+                        @if (session('login_error'))
+                            <div class="alert alert-danger mt-3">
+                                {{ session('login_error') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
 

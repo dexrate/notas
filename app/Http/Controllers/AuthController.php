@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,19 +33,45 @@ class AuthController extends Controller
         //get user input
         $username = $request->input('text_username');
         $password = $request->input('text_password');
-        
-        //teste bd
-        try {
-            DB::connection()->getPdo();
-            echo "Conexão com o banco de dados estabelecida com sucesso.";
-        } catch (\PDOException $e) {
-            echo "Erro ao acessar o banco de dados: " . $e->getMessage();
-            // return redirect()->back()->withErrors(['database' => 'Erro ao acessar o banco de dados.']);
+
+        //verificar se usuário existe no banco de dados
+        $usuario = Usuario::where('usuario', $username)->where('deleted_at', null)->first();
+
+        if (!$usuario) {
+            return redirect()->back()->withInput()->with(['login_error' => 'Usuário ou senha incorretos.']);
         }
+
+        if (!password_verify($password, $usuario->senha)) {
+            return redirect()->back()->withInput()->with(['login_error' => 'Usuário ou senha incorretos.']);
+        }
+
+        //atualizar o campo last_login no banco de dados
+        $usuario->ultimo_login = now();
+        $usuario->save();
+
+        // usuario logado na sessão com sucesso | colocar na sessão
+        session(['usuario' => [
+            'id' => $usuario->id,
+            'usuario' => $usuario->usuario,
+        ]]);
+
+        return redirect()->to('/')->with(['login_success' => 'Login realizado com sucesso.Bem-vindo, ' . $usuario->usuario . '!']);
+
+        // echo "Login bem-sucedido. Bem-vindo, " . $usuario->usuario . "!";
+        //teste bd
+        // try {
+        //     DB::connection()->getPdo();
+        //     echo "Conexão com o banco de dados estabelecida com sucesso.";
+        // } catch (\PDOException $e) {
+        //     echo "Erro ao acessar o banco de dados: " . $e->getMessage();
+        //     // return redirect()->back()->withErrors(['database' => 'Erro ao acessar o banco de dados.']);
+        // }
     }
 
     public function logout()
     {
-        echo "logout";
+        //remover usuario da sessão
+        session()->forget(['usuario', 'id']);
+        return redirect()->to('login')->with(['logout_success' => 'Logout realizado com sucesso.']);
     }
 }
